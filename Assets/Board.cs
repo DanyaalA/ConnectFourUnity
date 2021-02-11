@@ -22,6 +22,11 @@ public class Board : MonoBehaviour
     {
         board =  new int[rows, columns];
 
+        Player p1 = PlayerOne.GetComponent(typeof(Player)) as Player;
+        Player p2 = PlayerTwo.GetComponent(typeof(Player)) as Player;
+        p1.isTurn = true;
+        p2.isTurn = false;
+
         DrawBoard();
     }
 
@@ -59,11 +64,40 @@ public class Board : MonoBehaviour
             y--;
         }
     }
+    
 
-
-    bool CheckWin(int rowPlaced, int columnsPlaced)
+    public void UpdateTurns(string name)
     {
-        int pValue = isPlayerOneTurn ? 1 : 2;
+        
+
+        Player player3 = GameObject.Find(name).GetComponent(typeof(Player)) as Player;
+        player3.isTurn = false;
+
+        string otherName = name == "PlayerOne" ? "PlayerTwo" : "PlayerOne";
+        Player player2 = GameObject.Find(otherName).GetComponent(typeof(Player)) as Player;
+        player2.isTurn = true;
+    }
+
+    public bool PlacePeice(int column, int peiceValue)
+    {
+      
+        for (int i = 5; i >= 0; i--)
+        {
+            if (board[i, column] == 0)
+            {
+                board[i, column] = peiceValue;
+
+                DrawBoard();
+
+                return CheckWin(i, column, peiceValue);
+            }
+        }
+
+        return false;
+    }
+
+    bool CheckWin(int rowPlaced, int columnsPlaced, int pValue)
+    {
         int count = 0;
         
         //Horizontal Check
@@ -92,7 +126,6 @@ public class Board : MonoBehaviour
         if (rowPlaced - 3 >= 0 && columnsPlaced + 3 < 7)
         {
             count = 0;
-            Debug.Log("Doing Check");
             for (int i = 0; i < 4; i++)
             {
                 if (board[rowPlaced - i, columnsPlaced + i] == pValue) count++;
@@ -105,7 +138,6 @@ public class Board : MonoBehaviour
         if (rowPlaced + 3 < 6 && columnsPlaced - 3 >= 0)
         {
             count = 0;
-            //Debug.Log("Doing Check");
             for (int i = 0; i < 4; i++)
             {
                 if (board[rowPlaced + i, columnsPlaced - i] == pValue) count++;
@@ -121,7 +153,6 @@ public class Board : MonoBehaviour
         if (rowPlaced + 3 < 6 && columnsPlaced + 3 < 7)
         {
             count = 0;
-            Debug.Log("Doing Check");
             for (int i = 0; i < 4; i++)
             {
                 if (board[rowPlaced + i, columnsPlaced + i] == pValue) count++;
@@ -134,7 +165,6 @@ public class Board : MonoBehaviour
         if (rowPlaced - 3 >= 0 && columnsPlaced - 3 >= 0)
         {
             count = 0;
-            Debug.Log("Doing Check");
             for (int i = 0; i < 4; i++)
             {
                 if (board[rowPlaced - i, columnsPlaced - i] == pValue) count++;
@@ -149,64 +179,7 @@ public class Board : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {        
-        Ray ray = Camera.main.ScreenPointToRay( Input.mousePosition );
-        RaycastHit hit;
-        Material peiceMat = isPlayerOneTurn ? PlayerOneMat : PlayerTwoMat;
-
-        //Find Hover Object
-        if (Physics.Raycast( ray, out hit, 100 ) )
-        {
-            GameObject peice = hit.transform.parent.transform.gameObject;
-            Peice p = peice.GetComponent(typeof(Peice)) as Peice;
-            int column = (p.column < 0) ? 0 : ((p.column > 6) ? 6 : p.column);
-
-            if (column >= 0 || column <= 6)
-            {
-                //Reset Hover Object
-                for (int c = 0; c < columns; c++)
-                {
-                    if (board[0, c] != 0)
-                    {
-                        //Debug.Log("Continuing");
-                        continue;
-                    }
-                    GameObject hObj = GameObject.Find("Peice " + c);
-                    Peice hPeice = hObj.GetComponent(typeof(Peice)) as Peice;
-                    hPeice.mat = backMat;
-                }
-            }
-
-            if (board[0, column] == 0)
-            {
-                GameObject hoverObject = GameObject.Find("Peice " + column);
-                Peice hoverPeice = hoverObject.GetComponent(typeof(Peice)) as Peice;
-                hoverPeice.mat = peiceMat;
-            }
-            
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                int peiceValue = isPlayerOneTurn ? 1 : 2;
-                //board[5, column] = peiceValue;
-
-                for (int i = 5; i >= 0; i--) 
-                {
-                    if (board[i, column] == 0)
-                    {
-                        board[i, column] = peiceValue;
-                        CheckWin(i, column);
-                        break;
-                    }
-                }
-                
-                
-                
-                DrawBoard();
-                isPlayerOneTurn = !isPlayerOneTurn;
-            }
-        }
-
+    {
         
     }
 }

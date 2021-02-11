@@ -150,6 +150,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a0b7d9917cb9ca41add5b3266322c08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTurn: 1
+  peiceValue: 1
 --- !u!4 &15344293
 Transform:
   m_ObjectHideFlags: 0
@@ -463,6 +465,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a0b7d9917cb9ca41add5b3266322c08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTurn: 0
+  peiceValue: 2
 --- !u!4 &1028845302
 Transform:
   m_ObjectHideFlags: 0
